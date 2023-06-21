@@ -49,7 +49,7 @@ function Card({ url }: { url: string, name?: string }) {
                 <div className="card-body items-center text-center">
                     <h2 className="card-title">{capitalize(data?.chain.species.name ?? "")}</h2>
                     <div className="card-actions justify-end">
-                        {isLoadingProps && <span className="loading loading-dots"></span>}
+                        {isLoadingProps && <span className="loading loading-dots bg-sky-500"></span>}
                         {d?.types && d.types.map(type => (
                             <div key={type.slot} className={`badge py-3 badge-ghost gap-2`}>
                                 {typed(type.type.name ?? "")} {capitalize(type.type.name ?? "")}

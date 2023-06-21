@@ -33,8 +33,6 @@ export default function Home() {
     setKeyword(e.target.value)
   }
 
-  // const changePage = (React.C)
-
   return (
     <Layout>
       <div className="navbar bg-base-100 rounded-xl shadow-xl">
@@ -73,19 +71,23 @@ export default function Home() {
         </li>
       </ul>
       <div className='flex flex-wrap gap-8 justify-evenly'>
-        {isLoading && <CardLoader />}
+        {isLoading && ((new Array(6).map((_, i) => (<CardLoader key={i} />))))}
         {data?.results && data?.results.map(poke => (
           <Card key={poke.url} {...poke} />
         ))}
       </div>
-      <div className="join">
-        <button className="join-item btn capitalize">Previous</button>
-        <button className="join-item btn">1</button>
-        <button className="join-item btn btn-active">2</button>
-        <button className="join-item btn">3</button>
-        <button className="join-item btn">4</button>
-        <button className="join-item btn capitalize">Next</button>
-      </div>
+      <>
+          {!isLoading && (
+          <div className="join">
+            <button className="join-item btn capitalize">Prev</button>
+            <button className="join-item btn">1</button>
+            <button className="join-item btn btn-active">2</button>
+            <button className="join-item btn">3</button>
+            <button className="join-item btn">4</button>
+            <button className="join-item btn capitalize">Next</button>
+          </div>
+          )}
+      </>
     </Layout>
   )
 }
