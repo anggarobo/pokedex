@@ -2,7 +2,7 @@ import Image from "next/image";
 import useSWR, { Fetcher } from 'swr'
 import { useRouter } from "next/router";
 import Layout from "~/components/layout";
-import { capitalize } from "~/utils/label";
+import { capitalize, evoline } from "~/utils/common";
 import { http } from "~/utils/http";
 import { PokeItem, PokeItemUrl, PokeResultType } from "~/types/pokemon";
 import React from "react";
@@ -24,44 +24,31 @@ function Pokemon() {
     const { data: evochain } = useSWR<EvoChainType>(species?.evolution_chain.url, http as Fetcher<EvoChainType>)
 
     const imgUrl = data?.sprites.other.dream_world.front_default ?? ""
-    const briefDesc = species?.flavor_text_entries?.[0]?.flavor_text
-    const breadcrumbs = ["pokedex", ...asPath?.slice(1).split('/')]
-
-    const evoline = (lines?: EvoPropsChainType[]): PokeResultType[] => {
-        const chain: PokeResultType[] = []
-        if (lines && lines.length > 0) {   
-            lines.forEach(poke => {
-                chain.push({ name: poke.species.name } as PokeResultType)
-                if (poke?.evolves_to) {
-                    chain.push(...evoline(poke.evolves_to))
-                }
-            })
-        }
-        return chain
-    } 
+    const briefDesc = species?.form_descriptions?.[0]?.description ?? species?.flavor_text_entries?.[0].flavor_text
+    const breadcrumbs = ["pokedex", ...asPath?.slice(1).split('/')]    
     const evolves = [{ name: evochain?.chain.species.name }, ...evoline(evochain?.chain.evolves_to)]
-    
+
     const onImgCompleted = () => setImgLoaded(true)
 
-    return ( 
+    return (
         <Layout>
             <div className="navbar bg-base-100 rounded-xl shadow-xl px-6">
                 <div className="text-sm breadcrumbs">
                     <ul>
                         {breadcrumbs.map((b, i) => {
-                            if (i+1 === breadcrumbs.length) {
+                            if (i + 1 === breadcrumbs.length) {
                                 return <li key={i}>{capitalize(b)}</li>
                             }
 
-                            return <li key={i}><Link href="/">{capitalize(b)}</Link></li> 
+                            return <li key={i}><Link href="/">{capitalize(b)}</Link></li>
                         })}
                     </ul>
                 </div>
             </div>
-            
+
             <div className="card lg:card-side bg-base-100 shadow-xl w-full">
                 <figure className='z-10 h-80 w-80 cursor-pointer p-4 relative'>
-                    { (imgUrl && !isLoading) ? (
+                    {(imgUrl && !isLoading) ? (
                         <Image src={imgUrl} loading="lazy" alt='pokemon' onLoadingComplete={onImgCompleted} width={1} height={1} className={[imgLoaded ? 'scale-100 p-8' : 'scale-125 blur-2xl'].join(' ')} />
                     ) : (
                         <div className="animate-pulse flex space-x-4 w-full">
@@ -91,12 +78,12 @@ function Pokemon() {
                             <Card  {...(chain) as PokeItemUrl} />
                             {i + 1 !== evolves.length && <ChevronRight height={36} width={36} />}
                         </div>
-                    )) }
+                    ))}
                     {/* {evolvesTo && evolvesTo} */}
                 </div>
             </div>
         </Layout>
-     );
+    );
 }
 
 export default Pokemon;

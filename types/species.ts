@@ -11,6 +11,11 @@ export interface PokeItemFlavorTextEntry {
     version: PokeResultType
 }
 
+export interface PokeItemFormDesc {
+    description: string
+    language: PokeResultType
+}
+
 export interface PokeItemSpecies {
     base_happiness: number
     capture_rate: number
@@ -19,7 +24,7 @@ export interface PokeItemSpecies {
     evolution_chain: PokeItemUrl
     evolves_from_species: unknown
     flavor_text_entries: PokeItemFlavorTextEntry[]
-    form_descriptions: unknown[]
+    form_descriptions: PokeItemFormDesc[]
     forms_switchable: boolean
     gender_rate: number
     genera: unknown[]
