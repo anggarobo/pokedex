@@ -15,7 +15,6 @@ function useQueryString() {
         },
         [searchParams]
     )
-    console.log(searchParams)
 
     const pushQuery = (key: string, value: string) => {
         push(`/?${createQueryString(key, `${value}`)}`)

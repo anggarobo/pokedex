@@ -22,6 +22,7 @@ const initPage: PageType = {
 }
 
 export default function Home() {
+  const [pokes, setPokes] = React.useState<PokeItem[]>([])
   const { setActiveSearch } = usePokeContext()
   const { getQuery, pushQuery } = useQueryString()
   const offsetUrl = getQuery('offset')
@@ -31,7 +32,8 @@ export default function Home() {
   const api = `/evolution-chain/?offset=${offsetUrl ?? offset}&limit=${limit}`
   const { data, isLoading } = useSWR<ResponseType>(api, http as Fetcher<ResponseType>)
   const { mutate } = useSWRConfig()
-  const [pokes, setPokes] = React.useState<PokeItem[]>([])
+
+  const page = offsetUrl ? +offsetUrl : offset
 
   const pokemons = React.useMemo(() => {
     const pokesFiltered = pokes?.filter(p => p.name.includes(keyword ?? ""))
@@ -52,7 +54,8 @@ export default function Home() {
   const onPage = (e: React.SyntheticEvent<HTMLButtonElement>) => {
     const id = e.currentTarget.id
     setPage(prev => {
-      const offsetPage = id === "next" ? prev.offset + 30 : prev.offset - 30
+      const page = offsetUrl ? +offsetUrl : prev.offset
+      const offsetPage = id === "next" ? page + 30 : page - 30
       pushQuery('offset', `${offsetPage}`)
       return {
         ...prev,
@@ -83,9 +86,9 @@ export default function Home() {
       </div>
       <>
           {(!isLoading && (data?.count ?? 0) > (pokemons?.length ?? 0)) && (
-          <div className="join">
+          <div className="join shadow-xl">
             <button id='prev' className="join-item btn capitalize" onClick={onPage} >Prev</button>
-            <button className="join-item btn capitalize" disabled >{(offset+30)/30}</button>
+            <div className="join-item capitalize flex items-center px-6 bg-white text-3xl" >{(page+30)/30}</div>
             <button id='next' className="join-item btn capitalize" onClick={onPage} >Next</button>
           </div>
           )}
