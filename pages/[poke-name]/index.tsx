@@ -4,19 +4,21 @@ import { useRouter } from "next/router";
 import Layout from "~/components/layout";
 import { capitalize } from "~/utils/label";
 import { http } from "~/utils/http";
-import { PokeItem } from "~/types/pokemon";
+import { PokeItem, PokeItemUrl, PokeResultType } from "~/types/pokemon";
 import React from "react";
 import { pokeTypes } from "~/constants/pokemon";
 import { PokeItemSpecies } from "~/types/species";
-import { EvoChainType } from "~/types/evo-chain";
+import { EvoChainType, EvoPropsChainType } from "~/types/evo-chain";
 import Link from "next/link";
+import Card from "~/components/card";
+import ChevronRight from "~/components/icons/chevronRight";
 
 const flag = '/pokemon'
 
 function Pokemon() {
     const { asPath } = useRouter()
     const [imgLoaded, setImgLoaded] = React.useState(false)
-    const pokename = asPath?.slice(1)?.split('/')?.[1]
+    const pokename = asPath?.slice(1)?.split('/')?.[0]
     const { data, isLoading } = useSWR<PokeItem>(`${flag}/${pokename}`, http as Fetcher<PokeItem>)
     const { data: species } = useSWR<PokeItemSpecies>(data?.species?.url, http as Fetcher<PokeItemSpecies>)
     const { data: evochain } = useSWR<EvoChainType>(species?.evolution_chain.url, http as Fetcher<EvoChainType>)
@@ -24,6 +26,20 @@ function Pokemon() {
     const imgUrl = data?.sprites.other.dream_world.front_default ?? ""
     const briefDesc = species?.flavor_text_entries?.[0]?.flavor_text
     const breadcrumbs = ["pokedex", ...asPath?.slice(1).split('/')]
+
+    const evoline = (lines?: EvoPropsChainType[]): PokeResultType[] => {
+        const chain: PokeResultType[] = []
+        if (lines && lines.length > 0) {   
+            lines.forEach(poke => {
+                chain.push({ name: poke.species.name } as PokeResultType)
+                if (poke?.evolves_to) {
+                    chain.push(...evoline(poke.evolves_to))
+                }
+            })
+        }
+        return chain
+    } 
+    const evolves = [{ name: evochain?.chain.species.name }, ...evoline(evochain?.chain.evolves_to)]
     
     const onImgCompleted = () => setImgLoaded(true)
 
@@ -37,7 +53,7 @@ function Pokemon() {
                                 return <li key={i}>{capitalize(b)}</li>
                             }
 
-                            return <li key={i}><Link href={b === "pokedex" ? "/" : `/${b}`}>{capitalize(b)}</Link></li> 
+                            return <li key={i}><Link href="/">{capitalize(b)}</Link></li> 
                         })}
                     </ul>
                 </div>
@@ -57,12 +73,26 @@ function Pokemon() {
                     <h1 className="card-title text-4xl">
                         {capitalize(pokename)}
                     </h1>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 mb-2">
                         {data?.types && data.types.map(t => (
                             <div className="badge py-3 bg-slate-100" key={t.slot} >{pokeTypes[t.type.name as keyof object]} {capitalize(t.type.name ?? "")}</div>
                         ))}
                     </div>
                     <p className="whitespace-pre">{briefDesc}</p>
+                </div>
+            </div>
+            <div className='h-[360px] flex flex-col items-center relative gap-2 w-full'>
+                <div className="self-start">
+                    <h1 className="text-2xl font-semibold">Evo Chain</h1>
+                </div>
+                <div className="flex flex-wrap">
+                    {evolves.length > 0 && evolves.map((chain, i) => (
+                        <div key={chain.name} className="flex items-center">
+                            <Card  {...(chain) as PokeItemUrl} />
+                            {i + 1 !== evolves.length && <ChevronRight height={36} width={36} />}
+                        </div>
+                    )) }
+                    {/* {evolvesTo && evolvesTo} */}
                 </div>
             </div>
         </Layout>

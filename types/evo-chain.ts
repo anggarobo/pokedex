@@ -4,7 +4,7 @@ type EvoDetailType = unknown[]
 
 export interface EvoPropsChainType {
     evolution_details: EvoDetailType
-    evolves_to: unknown
+    evolves_to: EvoPropsChainType[]
     is_baby: boolean
     species: PokeResultType
 }
