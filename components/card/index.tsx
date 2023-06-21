@@ -8,20 +8,22 @@ import { EvoChainType } from "~/types/evo-chain";
 import { useRouter } from "next/router";
 import { pokeTypes } from "~/constants/pokemon";
 import CardLoader from "./skeleton";
+import Loader from "../loader";
 
 const baseUrl = 'https://pokeapi.co/api/v2/pokemon'
 
 const typed = (val: string) => pokeTypes[val as keyof object]
 
-function Card({ url, name }: { url?: string, name?: string }) {
+function Card({ url, name, pokemon }: { url?: string, name?: string, pokemon?: PokeItem }) {
     const { push } = useRouter()
     const [imgLoaded, setImgLoaded] = React.useState(false)
     const { data, isLoading } = useSWR<EvoChainType>(url, http as Fetcher<EvoChainType>)
     const api = data?.chain?.species?.name ? `${baseUrl}/${data?.chain.species.name}` : `${baseUrl}/${name}`
-    const { data: d, isLoading: isLoadingProps } = useSWR<PokeItem>(api, http as Fetcher<PokeItem>)
+    const { data: poke, isLoading: isLoadingProps } = useSWR<PokeItem>(api, http as Fetcher<PokeItem>)
     const buttonRef = React.useRef<HTMLButtonElement>(null)
-    const imgUrl = d?.sprites?.other?.dream_world?.front_default ?? ""
-    const pokeName = data?.chain?.species?.name ?? d?.name ?? ""
+    const imgUrl = (pokemon ?? poke)?.sprites?.other?.dream_world?.front_default ?? ""
+    const pokeName = pokemon?.name ?? data?.chain?.species?.name ?? poke?.name ?? ""
+    const pokeTypes = pokemon?.types ?? poke?.types
 
     const navigate = () => {
         push(`/${pokeName}`)
@@ -48,10 +50,10 @@ function Card({ url, name }: { url?: string, name?: string }) {
             </figure>
             <div className={`card w-72 bg-base-100 shadow-xl mt-24 pt-12 cursor-pointer hover:bg-slate-50 transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-105 duration-300`} onClick={onNavigate}>
                 <div className="card-body items-center text-center">
-                    <h2 className="card-title">{capitalize(pokeName)}</h2>
+                    {pokeName ? <h2 className="card-title">{capitalize(pokeName)}</h2> : <Loader />}
                     <div className="card-actions justify-end">
-                        {isLoadingProps && <span className="loading loading-dots bg-sky-500"></span>}
-                        {d?.types && d.types.map(type => (
+                        {(isLoadingProps || !pokeTypes) && <Loader />}
+                        {pokeTypes && pokeTypes.map(type => (
                             <div key={type.slot} className={`badge py-3 badge-ghost gap-2`}>
                                 {typed(type.type.name ?? "")} {capitalize(type.type.name ?? "")}
                             </div>

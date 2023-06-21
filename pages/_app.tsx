@@ -1,6 +1,11 @@
 import '~/styles/globals.css'
 import type { AppProps } from 'next/app'
+import PokeProvider from '~/context/pokedex'
 
 export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  return (
+    <PokeProvider>
+      <Component {...pageProps} />
+    </PokeProvider>
+  )
 }

@@ -30,6 +30,8 @@ export interface PokeBack {
 export interface PokeItemSpritesOther {
     dream_world: PokeFront
     home: PokeFront
+    "official-artwork": PokeFront
+
 }
 
 export interface PokeItemSprites extends PokeFront, PokeBack {
