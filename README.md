@@ -1,7 +1,8 @@
-## Pokedex 
+# Pokedex 
 
 A nice-looking website that provides the most extensive pokemon database of the fire [https://pokeapi.co/](https://pokeapi.co/).
-# Libraries
+
+### Libraries
 
 The following libraries were utilized in this project:
 
