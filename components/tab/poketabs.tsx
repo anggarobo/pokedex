@@ -35,7 +35,7 @@ function PokeTabs({ endpoint = "habitat" }: { endpoint?: "habitat" | "type" }) {
                 >
                     ❮
                 </a>
-                <div className="carousel w-full bg-slate-100 rounded-lg shadow-xl gap-1">
+                <div className={["carousel w-full bg-slate-100 rounded-lg shadow-xl gap-1", isLoading && "justify-center"].join(" ")}>
                     {isLoading ? <Loader /> : data?.results.map(({ name }, i) => {
                         const id = i + 1
                         return (

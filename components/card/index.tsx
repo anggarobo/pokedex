@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { pokeTypes } from "~/constants/pokemon";
 import CardLoader from "./skeleton";
 import Loader from "../loader";
+import imgPokeball from "~/assets/squirtle-silhouette.png";
 
 const baseUrl = 'https://pokeapi.co/api/v2/pokemon'
 
@@ -21,7 +22,7 @@ function Card({ url, name, pokemon }: { url?: string, name?: string, pokemon?: P
     const api = data?.chain?.species?.name ? `${baseUrl}/${data?.chain.species.name}` : `${baseUrl}/${name}`
     const { data: poke, isLoading: isLoadingProps } = useSWR<PokeItem>(api, http as Fetcher<PokeItem>)
     const buttonRef = React.useRef<HTMLButtonElement>(null)
-    const imgUrl = (pokemon ?? poke)?.sprites?.other?.dream_world?.front_default ?? ""
+    const imgUrl = (pokemon ?? poke)?.sprites?.other?.dream_world?.front_default ?? imgPokeball
     const pokeName = pokemon?.name ?? data?.chain?.species?.name ?? poke?.name ?? ""
     const pokeTypes = pokemon?.types ?? poke?.types
 
@@ -42,7 +43,9 @@ function Card({ url, name, pokemon }: { url?: string, name?: string, pokemon?: P
     return (
         <div className='h-[360px] flex flex-col items-center relative'>
             <figure className='absolute z-10 h-40 cursor-pointer' onClick={onNavigate}>
-                {(imgUrl && !isLoading) ? <Image src={imgUrl} onLoadingComplete={onImgCompleted} alt={pokeName} width={180} height={160} className={[imgLoaded ? 'scale-100 h-full' : 'blur-xl'].join(' ')} /> : (
+                {imgUrl ? (
+                    <Image src={imgUrl} onLoadingComplete={onImgCompleted} alt={pokeName} width={180} height={160} className={[imgLoaded ? 'scale-100 h-full blur-0 w-auto' : 'scale-125 blur-2xl'].join(' ')} />
+                ) : (
                     <div className="animate-pulse flex space-x-4 w-full">
                         <div className="rounded-lg bg-slate-200 h-40 w-40 blur-xl"></div>
                     </div>

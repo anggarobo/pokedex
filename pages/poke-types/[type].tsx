@@ -3,6 +3,7 @@ import useSWR, { Fetcher } from "swr";
 import Card from "~/components/card";
 import CardLoader from "~/components/card/skeleton";
 import Layout from "~/components/layout";
+import Loader from "~/components/loader";
 import Tab from "~/components/tab";
 import PokeTabs from "~/components/tab/poketabs";
 import { PokeTypesItem } from "~/types/poke-types";
@@ -20,9 +21,11 @@ function PokeType() {
                 <Tab />
                 <PokeTabs endpoint="type" />
             </div>
-            <div>
-                <h1 className="text-3xl font-medium">{capitalize(pokeType ?? "normal")}</h1>
-            </div>
+            {isLoading ? <Loader /> : (
+                <div>
+                    <h1 className="text-3xl font-medium">{capitalize(pokeType ?? "normal")}</h1>
+                </div>
+            )}
             <div className="flex flex-wrap gap-8 justify-evenly">
                 {isLoading && ((new Array(6).map((_, i) => (<CardLoader key={i} />))))}
                 {data?.pokemon && data.pokemon.map(poke => (
