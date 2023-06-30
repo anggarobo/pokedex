@@ -87,7 +87,7 @@ export default function Home() {
       <>
           {(!isLoading && (data?.count ?? 0) > (pokemons?.length ?? 0)) && (
           <div className="join shadow-xl">
-            <button id='prev' className="join-item btn capitalize" onClick={onPage} >Prev</button>
+            <button id='prev' className="join-item btn capitalize" disabled={offset === 0} onClick={onPage} >Prev</button>
             <div className="join-item capitalize flex items-center px-6 bg-white text-3xl" >{(page+30)/30}</div>
             <button id='next' className="join-item btn capitalize" onClick={onPage} >Next</button>
           </div>
