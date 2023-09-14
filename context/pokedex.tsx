@@ -22,14 +22,14 @@ export const usePokeContext = () => React.useContext(PokeContext)
 export default function PokeProvider({ children }: { children: JSX.Element | JSX.Element[] | string }) {
     const [keyword, setKeyword] = React.useState("")
     const [activeSearch, setActiveSearch] = React.useState(false)
-    const { pushQuery } = useQueryString()
+    const { pushQueries } = useQueryString()
     const inputRef = React.useRef<HTMLInputElement>(null)
 
     const onSearch = React.useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        pushQuery('pokemon', keyword)
+        pushQueries({pokemon: keyword})
         setActiveSearch(true)
-    }, [pushQuery, keyword])
+    }, [keyword, pushQueries])
 
     const onClose = (e: React.SyntheticEvent) => {
         e.stopPropagation()
@@ -91,7 +91,7 @@ export default function PokeProvider({ children }: { children: JSX.Element | JSX
                                 id='search'
                                 ref={inputRef}
                                 className="input input-bordered join-item w-full rounded-xl"
-                                placeholder="Search Pokemons"
+                                placeholder="Search a pokemon"
                                 style={{
                                     borderRadius: '12px'
                                 }}
@@ -103,13 +103,6 @@ export default function PokeProvider({ children }: { children: JSX.Element | JSX
                             
                         </div>
                     </form>
-                    {/* <input 
-                        type="text" 
-                        placeholder="Search Pokemons" 
-                        className="input input-xl input-bordered input-accent" 
-                        style={{ width: "50%", zIndex: 105, background: "white", opacity: 1 }} 
-                        ref={inputRef}
-                    /> */}
                 </div>
             )}
             {children}

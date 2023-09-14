@@ -8,3 +8,4 @@ export interface ResponseType {
 }
 
 export type HttpResponse<T=unknown> = T
+export type HttpRequest<T> = (endpoint: string, options?: RequestInit) => Promise<T>
